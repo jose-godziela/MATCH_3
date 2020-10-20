@@ -1,25 +1,29 @@
 #ifndef MAINFRAME_H
 #define MAINFRAME_H
-#include "raylib.h"
-
 #include <iostream>
+#include <ctime>
+
+#include "raylib.h"
+#include "jewel.h"
+
 using namespace std;
+
+const int FPS = 60;
 
 
 namespace M3 {
 	class Mainframe {
 	private:
-		int _winWidth;
-		int _winHeight;
+		int _win_width;
+		int _win_height;
 		bool _pause;
 		bool _mainBool;
-
 	public:
-		enum class screenID {
+		enum class screen_ID {
 			menu,
 			game
 		};
-		screenID screenId;
+		screen_ID screenId;
 
 		Mainframe();
 		~Mainframe();
@@ -32,7 +36,6 @@ namespace M3 {
 		void update();
 		void draw();
 		void input();
-		void collisions();
 	};
 }
 #endif

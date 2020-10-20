@@ -1,49 +1,62 @@
 #include "Mainframe.h"
 
 
-namespace M3 {
-	Mainframe::Mainframe() {
-		_winWidth = 800;
-		_winHeight = 450;
+namespace M3 
+{
+	Jewel _jewels[10][10];
+
+	Mainframe::Mainframe()
+	{
+		_win_width = 800;
+		_win_height = 480;
 		_pause = false;
 		_mainBool = true;
-		screenID screenId;
+		screen_ID screenId;
 	
 	}
-	Mainframe::~Mainframe() {
+	Mainframe::~Mainframe() 
+	{
 		CloseAudioDevice();
 		CloseWindow();
 	}
 
-	void Mainframe::init() {
-		screenId = screenID::menu;
-		InitWindow(_winWidth, _winHeight, "HSS - Match 3");
-		SetTargetFPS(60);
-		SetExitKey(KEY_VOLUME_UP);
+	void Mainframe::init() 
+	{
+		screenId = screen_ID::menu;
+		InitWindow(_win_width, _win_height, "Match 3");
+		SetTargetFPS(FPS);
+		SetExitKey(NULL);
 		InitAudioDevice();
+		init_jewel(_jewels);
 	}
-	void Mainframe::setScene(int scene) {
-		switch (scene) {
-		case 0:
-			screenId = screenID::menu;
-			break;
-		case 1:
-			screenId = screenID::game;
-			break;
-		}
-	}
-	void Mainframe::mainLoop() {
-
-		while (!WindowShouldClose() && _mainBool) {
-			switch (screenId) {
-			case screenID::menu:
-				menuScreen();
-			case screenID::game:
-				gameScreen();
+	void Mainframe::setScene(int scene) 
+	{
+		switch (scene) 
+			{
+			case 0:
+				screenId = screen_ID::menu;
+				break;
+			case 1:
+				screenId = screen_ID::game;
+				break;
 			}
+	}
+	void Mainframe::mainLoop() 
+	{
+
+		while (!WindowShouldClose() && _mainBool) 
+		{
+			switch (screenId) 
+				{
+				case screen_ID::menu:
+					menuScreen();
+				case screen_ID::game:
+					gameScreen();
+				}
 		}
 	}
-	void Mainframe::menuScreen() {
+	void Mainframe::menuScreen() 
+	{
 
 		Rectangle playButton;
 		playButton.x = 20.0f;
@@ -51,17 +64,12 @@ namespace M3 {
 		playButton.height = 30.0f;
 		playButton.width = 65.0f;
 
-		Rectangle tutorialButton;
-		tutorialButton.x = 20.0f;
-		tutorialButton.y = (GetScreenHeight() / 2.0f) + 50.0f;
-		tutorialButton.height = 30.0f;
-		tutorialButton.width = 129.0f;
-
 		Rectangle creditsButton;
 		creditsButton.x = 20.0f;
 		creditsButton.y = (GetScreenHeight() / 2) + 100.0f;
 		creditsButton.height = 30.0f;
 		creditsButton.width = 113.0f;
+		
 		Rectangle closeButton;
 		closeButton.x = 20.0f;
 		closeButton.y = (GetScreenHeight() / 2) + 150.0f;
@@ -70,7 +78,8 @@ namespace M3 {
 
 
 
-		while (!WindowShouldClose() && screenId == screenID::menu&&_mainBool) {
+		while (!WindowShouldClose() && screenId == screen_ID::menu&&_mainBool)
+		{
 		
 			BeginDrawing();
 			ClearBackground(BLACK);
@@ -82,11 +91,6 @@ namespace M3 {
 				DrawText(FormatText("Play"), 20, GetScreenHeight() / 2, 30, RED);
 			else
 				DrawText(FormatText("Play"), 20, GetScreenHeight() / 2, 30, WHITE);
-
-			if (CheckCollisionPointRec(GetMousePosition(), tutorialButton))
-				DrawText(FormatText("Tutorial"), 20, (GetScreenHeight() / 2)+50, 30, RED);
-			else
-				DrawText(FormatText("Tutorial"), 20, (GetScreenHeight() / 2)+50, 30, WHITE);
 
 
 			if (CheckCollisionPointRec(GetMousePosition(), creditsButton))
@@ -107,11 +111,6 @@ namespace M3 {
 				DrawText(FormatText("Felix Godziela"), (GetScreenWidth() / 2 + 40), (GetScreenHeight() / 3) + 130, 30, WHITE);
 			}
 
-			if (CheckCollisionPointRec(GetMousePosition(), tutorialButton)) {
-
-			}
-
-
 			EndDrawing();
 			if (CheckCollisionPointRec(GetMousePosition(), closeButton) && IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
 				exit(0);
@@ -122,16 +121,13 @@ namespace M3 {
 		}
 		
 	}
-	void Mainframe::gameScreen() {
+	void Mainframe::gameScreen() 
+	{
 
-		while (!WindowShouldClose() && screenId == screenID::game&&_mainBool) {
+		while (!WindowShouldClose() && screenId == screen_ID::game&&_mainBool) {
 			if (!_pause) {
 				input();
 				update();
-#if DEBUG
-		
-#endif
-				collisions();
 				draw();
 			}
 
@@ -139,24 +135,35 @@ namespace M3 {
 	}
 
 
-	void Mainframe::input() {
+	//Match 3
+
+	void Mainframe::input() 
+	{
 
 	}
-	void Mainframe::update() {
+	void Mainframe::update() 
+	{
+		//find matches
+		for (int i = 1; i <= 8; i++)
+			for (int j = 1; j <= 8; j++)
+			{
+				if (_jewels[i][j].kind == _jewels[i + 1][j].kind)
+					if (_jewels[i][j].kind == _jewels[i - 1][j].kind)
+						for (int n = -1; n <= 1; n++) _jewels[i + n][j].match++;
 
-		
-	}
-	void Mainframe::collisions() {
-		
+				if (_jewels[i][j].kind == _jewels[i][j + 1].kind)
+					if (_jewels[i][j].kind == _jewels[i][j - 1].kind)
+						for (int n = -1; n <= 1; n++) _jewels[i][j + n].match++;
+			}
 	}
 	void Mainframe::draw() {
 		BeginDrawing();
 		ClearBackground(BLACK);
-		
-#if DEBUG
-		
-#endif
-
+		for (int i = 1; i <= 8; i++)
+			for (int j = 1; j <= 8; j++)
+			{
+				DrawCircle(_jewels[i][j].pos_xy.x, _jewels[i][j].pos_xy.y, 10, _jewels[i][j].color);
+			}
 		EndDrawing();
 	}
 

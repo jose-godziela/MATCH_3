@@ -146,10 +146,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="jewel.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mainframe.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="jewel.h" />
     <ClInclude Include="Mainframe.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
