@@ -14,6 +14,7 @@ namespace M3
 		int kind;			//type of jewel
 		int match;			//this way, if there's more than 2 matches, it will be destroyed
 		Color color;
+		Texture2D texture;
 	};
 	
 	extern Jewel _jewels[10][10];	//For the moment, the grid will be hardcoded to be 10x10

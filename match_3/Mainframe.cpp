@@ -4,6 +4,8 @@
 namespace M3 
 {
 	Jewel _jewels[10][10];
+	void check_matches();
+	Vector2 mouse_pos;
 
 	Mainframe::Mainframe()
 	{
@@ -144,17 +146,7 @@ namespace M3
 	void Mainframe::update() 
 	{
 		//find matches
-		for (int i = 1; i <= 8; i++)
-			for (int j = 1; j <= 8; j++)
-			{
-				if (_jewels[i][j].kind == _jewels[i + 1][j].kind)
-					if (_jewels[i][j].kind == _jewels[i - 1][j].kind)
-						for (int n = -1; n <= 1; n++) _jewels[i + n][j].match++;
-
-				if (_jewels[i][j].kind == _jewels[i][j + 1].kind)
-					if (_jewels[i][j].kind == _jewels[i][j - 1].kind)
-						for (int n = -1; n <= 1; n++) _jewels[i][j + n].match++;
-			}
+		check_matches();
 	}
 	void Mainframe::draw() {
 		BeginDrawing();
@@ -162,9 +154,32 @@ namespace M3
 		for (int i = 1; i <= 8; i++)
 			for (int j = 1; j <= 8; j++)
 			{
-				DrawCircle(_jewels[i][j].pos_xy.x, _jewels[i][j].pos_xy.y, 10, _jewels[i][j].color);
+				DrawCircle(_jewels[i][j].pos_xy.x, _jewels[i][j].pos_xy.y, 15, _jewels[i][j].color);
 			}
 		EndDrawing();
 	}
 
+	void swap(Jewel p1, Jewel p2)
+	{
+		std::swap(p1.pos_mat.x, p2.pos_mat.x);
+		std::swap(p1.pos_mat.y, p2.pos_mat.y);
+
+		_jewels[static_cast<int>(p1.pos_mat.y)][static_cast<int>(p1.pos_mat.x)] = p1;
+		_jewels[static_cast<int>(p2.pos_mat.y)][static_cast<int>(p2.pos_mat.x)] = p2;
+	}
+
+	void check_matches()
+	{
+		for (int i = 1; i <= 8; i++)
+			for (int j = 1; j <= 8; j++)
+			{
+				if (_jewels[i][j].kind == _jewels[i + 1][j].kind)
+					if (_jewels[i][j].kind == _jewels[i - 1][j].kind)
+						for (int n = -1; n <= 1; n++) _jewels[i + n][j].match++; 
+
+				if (_jewels[i][j].kind == _jewels[i][j + 1].kind)
+					if (_jewels[i][j].kind == _jewels[i][j - 1].kind)
+						for (int n = -1; n <= 1; n++) _jewels[i][j + n].match++;
+			}
+	}
 }
